@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Media</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-semibold text-gray-800">MyApp</h1>
+
+    <form action="/logout" method="POST">
+      <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+        Logout
+      </button>
+    </form>
+  </nav>
+
+  <main class="max-w-4xl mx-auto mt-10 px-4">
+
+    <!-- Welcome -->
+    <section class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800">
+        Welcome, <span class="text-blue-600"><%= curr_user.username %></span> 👋
+      </h2>
+      <p class="text-gray-600 mt-2">
+        This is your profile dashboard.
+      </p>
+    </section>
+
+    <!-- Create Post -->
+    <section class="bg-white rounded-lg shadow p-6 mb-8">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">
+        Create a Post ✍️
+      </h3>
+
+      <form action="/create-post" method="post"  class="space-y-4">
+        <textarea
+          rows="3"
+          placeholder="What's on your mind?"
+          class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          name="content"
+        ></textarea>
+
+        <input
+          type="url"
+          placeholder="Image URL"
+          class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500"
+          name="postimg"
+        />
+
+        <div class="flex justify-end">
+          <button class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+            Post
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Posts -->
+    <section>
+  <h3 class="text-xl font-semibold text-gray-800 mb-4">
+    Your Posts
+  </h3>
+
+
+  <div class="space-y-6">
+    <% postarray.forEach(post => { %>
+      <div class="bg-white rounded-lg shadow p-4">
+
+        <!-- Like Row -->
+        <div class="flex items-center gap-2 mb-3">
+  <form action="/posts/<%= post._id %>/like" method="POST">
+    <button type="submit" class="text-xl">
+      <% if (post.likes.includes(curr_user._id)) { %>
+        ❤️
+      <% } else { %>
+        🤍
+      <% } %>
+    </button>
+  </form>
+
+  <span class="text-gray-700 font-medium">
+    <%= post.likes.length %>
+  </span>
+</div>
+
+
+        <!-- Post Content -->
+        <p class="text-gray-800 mb-3">
+          <%= post.content %>
+        </p>
+
+        <!-- Post Image -->
+        <% if (post.postimg) { %>
+          <img
+            src="<%= post.postimg%>"
+            class="w-full rounded-lg max-h-96 object-cover"
+          />
+        <% } %>
+
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+
+  </main>
+
+  <!-- Like Toggle Script -->
+  <script>
+  function toggleLike(postId) {
+    const btn = document.getElementById(`like-btn-${postId}`);
+    const countEl = document.getElementById(`like-count-${postId}`);
+
+    let count = parseInt(countEl.innerText);
+
+    if (btn.innerText === "🤍") {
+      btn.innerText = "❤️";
+      btn.classList.add("text-red-500");
+      countEl.innerText = count + 1;
+    } else {
+      btn.innerText = "🤍";
+      btn.classList.remove("text-red-500");
+      countEl.innerText = count - 1;
+    }
+  }
+</script>
+
+
+</body>
+</html>
